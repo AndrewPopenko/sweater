@@ -14,32 +14,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Map;
 
 @Controller
-public class GreetingController {
+public class MainController {
 
     @Autowired
     private MessageRepository messageRepository;
 
-    @GetMapping("/greeting")
-    public String greeting(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        model.addAttribute("name", name);
+    @GetMapping("/")
+    public String greeting(Map<String, Object> model) {
         return "greeting";
     }
 
-    @GetMapping("/")
-    public String helloing(Map<String, Object> model) {
-
-        return "jpa";
-    }
-
-    @GetMapping("/jpa")
-    public String jpa(Map<String, Object> model) {
+    @GetMapping("/main")
+    public String main(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
         Iterable<Message> messages = messageRepository.findAll();
-        model.put("messages", messages);
 
-        return "jpa";
+        if (filter != null && !filter.isEmpty()) {
+            messages = messageRepository.findByTags(filter);
+        } else {
+            messages = messageRepository.findAll();
+        }
+
+        model.addAttribute("messages", messages);
+        model.addAttribute("filter", filter);
+
+        return "main";
     }
 
-    @PostMapping("jpa")
+    @PostMapping("/main")
     public String addMessage(@AuthenticationPrincipal User user,
                              @RequestParam String text, @RequestParam String tags, Map<String, Object> model) {
         Message message = new Message(text, tags, user);
@@ -49,22 +50,8 @@ public class GreetingController {
         Iterable<Message> messages = messageRepository.findAll();
 
         model.put("messages", messages);
+        model.put("filter", "");
 
-        return "jpa";
-    }
-
-    @PostMapping("/filter")
-    public String filter(@RequestParam String filter, Map<String, Object> model) {
-        Iterable<Message> messages;
-
-        if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findByTags(filter);
-        } else {
-            messages = messageRepository.findAll();
-        }
-
-        model.put("messages", messages);
-
-        return "jpa";
+        return "main";
     }
 }

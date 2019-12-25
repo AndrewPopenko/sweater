@@ -13,6 +13,14 @@ public class Message {
         this.tags = tags;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getUserName() {
         return user != null ? user.getUsername() : "<none>";
     }
