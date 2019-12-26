@@ -21,6 +21,14 @@ public class Message {
         this.id = id;
     }
 
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
     public String getUserName() {
         return user != null ? user.getUsername() : "<none>";
     }
@@ -55,6 +63,7 @@ public class Message {
 
     private String text;
     private String tags;
+    private String filename;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
